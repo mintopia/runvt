@@ -1,0 +1,29 @@
+<html>
+	<head>
+		<title>CasparCG</title>
+
+		<script type="text/javascript" 
+        src="http://localhost:8000/faye/client.js">
+        </script>
+	</head>
+	<body>
+			<div id="filename">Filename</div>
+			<div id="timer"></div>
+
+		<script type="text/javascript">
+			var client = new Faye.Client('http://localhost:8000/faye');
+
+			var filename = document.getElementById('filename');
+			var timer = document.getElementById('timer');
+
+			client.subscribe('/caspar', function (data) {
+				if (data.payload === 'filename') {
+					filename.innerHTML = data.filename;
+				} else if (data.payload === 'timestamp') {
+					timer.innerHTML = data.length - data.current;
+				}
+			});
+
+		</script>
+	</body>
+</html>
