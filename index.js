@@ -38,6 +38,8 @@ var udpPort = new osc.UDPPort({
     localPort: 6250
 });
 
+var layers = {};
+
 udpPort.on("ready", function () {
     var ipAddresses = getIPAddresses();
 
@@ -48,20 +50,59 @@ udpPort.on("ready", function () {
 });
 
 udpPort.on("message", function (oscMessage) {
-    if (oscMessage.address.match(/^\/channel\/(\d+)\/stage\/layer\/(\d+)\/file\/time$/)) {
-        sendWebSocket({
-            'address': oscMessage.address,
-            'payload': 'timestamp',
-            'current': oscMessage.args[0],
-            'length': oscMessage.args[1]
-        });
-    }
-    if (oscMessage.address.match(/^\/channel\/(\d+)\/stage\/layer\/(\d+)\/file\/path$/)) {
-        sendWebSocket({
-            'address': oscMessage.address,
-            'payload': 'filename',
-            'filename': oscMessage.args[0]
-        });
+    let match = null;
+    let changed = false;
+    if (match = oscMessage.address.match(/^\/channel\/(\d+)\/stage\/layer\/(\d+)\/foreground\/(.*)$/)) {
+        let key = match[1] + '-' + match[2];
+        if (!layers[key]) {
+                layers[key] = {
+                    'channel': match[1],
+                    'layer': match[2],
+                    'key': key,
+                    'paused': false,
+                    'loop': false,
+                    'timestamp': 0,
+                    'duration': 0,
+                    'path': '',
+                    'lastsent': Date.now()
+                };
+                changed = true;
+        }
+        if (match[3] === 'file/path') {
+            if (layers[key].path != oscMessage.args[0]) {
+                changed = true;
+                layers[key].path = oscMessage.args[0];
+            }
+        } else if (match[3] === 'file/time') {
+            if (layers[key].duration != oscMessage.args[1]) {
+                changed = true;
+                layers[key].duration = oscMessage.args[1];
+            }
+            if (layers[key].timestamp >= oscMessage.args[0]) {
+                changed = true;
+            }
+            layers[key].timestamp = oscMessage.args[0];
+        } else if (match[3] === 'loop') {
+            if (layers[key].loop != oscMessage.args[0]) {
+                changed = true;
+                layers[key].loop = oscMessage.args[0];
+            }
+        } else if (match[3] === 'paused') {
+            if (layers[key].paused != oscMessage.args[0]) {
+                changed = true;
+                layers[key].paused = oscMessage.args[0];
+            }
+        }
+        if ((layers[key].lastsent + 5000) < Date.now()) {
+            changed = true;
+        }
+        if (changed) {
+            changed = false;
+            layers[key].lastsent = Date.now();
+            console.log('Sending update for channel ' + layers[key].channel + ' layer ' + layers[key].layer);
+            console.log(layers[key]);
+            sendWebSocket(layers[key]);
+        }
     }
 });
 

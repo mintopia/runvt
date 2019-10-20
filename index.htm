@@ -9,19 +9,19 @@
 	<body>
 			<div id="filename">Filename</div>
 			<div id="timer"></div>
+			<div id="debug"></div>
 
 		<script type="text/javascript">
 			var client = new Faye.Client('http://localhost:8000/faye');
 
 			var filename = document.getElementById('filename');
 			var timer = document.getElementById('timer');
+			var debug = document.getElementById('debug');
 
 			client.subscribe('/caspar', function (data) {
-				if (data.payload === 'filename') {
-					filename.innerHTML = data.filename;
-				} else if (data.payload === 'timestamp') {
-					timer.innerHTML = data.length - data.current;
-				}
+				debug.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+				filename.innerHTML = data.path;
+				timer.innerHTML = data.duration - data.timestamp;
 			});
 
 		</script>
