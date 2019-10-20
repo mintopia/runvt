@@ -18,10 +18,18 @@
 			var timer = document.getElementById('timer');
 			var debug = document.getElementById('debug');
 
-			client.subscribe('/caspar', function (data) {
+			client.subscribe('/caspar/all', function (data) {
 				debug.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
 				filename.innerHTML = data.path;
 				timer.innerHTML = data.duration - data.timestamp;
+			});
+
+			client.subscribe('/caspar/control', function (data) {
+				console.log(data);
+			})
+
+			client.publish('/caspar/control', {
+				'channel': '/caspar/1-10'
 			});
 
 		</script>

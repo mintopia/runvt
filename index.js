@@ -28,9 +28,9 @@ var server = http.createServer(),
 bayeux.attach(server);
 server.listen(8000);
 
-var sendWebSocket = function(payload)
+var sendWebSocket = function(channel, payload)
 {
-    bayeux.getClient().publish('/caspar', payload);
+    bayeux.getClient().publish('/caspar/' + channel, payload);
 }
 
 var udpPort = new osc.UDPPort({
@@ -100,8 +100,8 @@ udpPort.on("message", function (oscMessage) {
             changed = false;
             layers[key].lastsent = Date.now();
             console.log('Sending update for channel ' + layers[key].channel + ' layer ' + layers[key].layer);
-            console.log(layers[key]);
-            sendWebSocket(layers[key]);
+            sendWebSocket(key, layers[key]);
+            sendWebSocket('all', layers[key]);
         }
     }
 });
