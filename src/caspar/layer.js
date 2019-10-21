@@ -58,8 +58,35 @@ class Layer {
 
     updateFromOSCMessage(oscMessage)
     {
-        // TODO: Update
+        // Match basic messages
+        let matches = oscMessage.address.match(/^\/channel\/(\d+)\/stage\/layer\/(\d+)\/foreground\/(.*)$/);
+        if (matches) {
+            switch (matches[3]) {
+                case 'file/path':
+                    this.path = oscMessage.args[0];
+                    break;
+
+                case 'file/time':
+                    this.timestamp = oscMessage.args[0];
+                    this.duration = oscMessage.args[1];
+                    break;
+
+                case 'loop':
+                    this.loop = oscMessage.args[0];
+                    break;
+
+                case 'paused':
+                    this.paused = oscMessage.args[0];
+                    break;
+
+                default:
+                    break;
+            }
+            return;
+        }
     }
+
+
 
     isSignificantChange(oldStruct, newStruct)
     {
