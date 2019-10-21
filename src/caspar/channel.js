@@ -7,12 +7,12 @@ class Channel {
         this.caspar = caspar;
         this.number = number;
         this.layers = [];
-        this.lastUpdated = Time.now();
+        this.lastUpdated = Date.now();
         this.broadcastChannel = '/casparcg/channels/' + this.number;
     }
 
     isActive() {
-        if (this.lastUpdated < (Time.now() - 1000)) {
+        if (this.lastUpdated < (Date.now() - 1000)) {
             return false;
         }
         return true;
@@ -30,7 +30,7 @@ class Channel {
 
     handleOSCMessage(oscMessage)
     {
-        this.lastUpdated = Time.now();
+        this.lastUpdated = Date.now();
 
         let matches = oscMessage.address.match(/^\/channel\/(\d+)\/stage\/layer\/(\d+)\/foreground\/(.*)$/);
         if (!matches) {
@@ -41,7 +41,7 @@ class Channel {
         if (!layer) {
             console.log('Adding layer ' + matches[2] + ' to channel ' + this.number);
             layer = new Layer(this, matches[2]);
-            this.layers.push(channel);
+            this.layers.push(layer);
         }
 
         layer.handleOSCMessage(oscMessage);

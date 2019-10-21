@@ -4,11 +4,12 @@ class Layer {
     constructor(channel, number) {
         this.channel = channel;
         this.number = number;
-        this.lastUpdated = Time.now();
+        this.lastUpdated = Date.now();
         this.broadcastChannel = '/casparcg/channels/' + channel.number + '/layers/' + this.number;
 
         this.producer = null;
         this.path = null;
+        this.name = null;
         this.paused = false;
         this.loop = false;
         this.timestamp = null;
@@ -16,7 +17,7 @@ class Layer {
     }
 
     isActive() {
-        if (this.lastUpdated < (Time.now() - 1000)) {
+        if (this.lastUpdated < (Date.now() - 1000)) {
             return false;
         }
         return true;
@@ -34,6 +35,7 @@ class Layer {
             'number': this.number,
             'producer': this.producer,
             'path': this.path,
+            'name': this.name,
             'paused': this.paused,
             'loop': this.loop,
             'timestamp': this.timestamp,
@@ -45,7 +47,7 @@ class Layer {
     {
         let oldStruct = this.getDataStruct();
         this.updateFromOSCMessage(oscMessage);
-        this.lastUpdated = Time.now();
+        this.lastUpdated = Date.now();
         let shouldBroadcast = this.isSignificantChange(oldStruct, this.getDataStruct());
 
         // We had a significant change, let's broadcast
@@ -62,6 +64,10 @@ class Layer {
         let matches = oscMessage.address.match(/^\/channel\/(\d+)\/stage\/layer\/(\d+)\/foreground\/(.*)$/);
         if (matches) {
             switch (matches[3]) {
+                case 'file/name':
+                    this.name = oscMessage.args[0];
+                    break;
+
                 case 'file/path':
                     this.path = oscMessage.args[0];
                     break;
@@ -79,6 +85,18 @@ class Layer {
                     this.paused = oscMessage.args[0];
                     break;
 
+                case 'producer':
+                    this.producer = oscMessage.args[0];
+                    if (this.producer === 'empty') {
+                        this.path = null;
+                        this.name = null;
+                        this.paused = false;
+                        this.loop = false;
+                        this.timestamp = null;
+                        this.duration = null;
+                    }
+                    break;
+
                 default:
                     break;
             }
@@ -93,6 +111,7 @@ class Layer {
         let comparisons = [
             'producer',
             'path',
+            'name',
             'paused',
             'loop',
             'duration'
@@ -104,7 +123,7 @@ class Layer {
             }
         }
 
-        if (oldStruct['timestamp'] >= newStruct['timestamp']) {
+        if (oldStruct['timestamp'] > newStruct['timestamp']) {
             return true;
         }
 
