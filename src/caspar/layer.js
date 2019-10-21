@@ -5,7 +5,7 @@ class Layer {
         this.channel = channel;
         this.number = number;
         this.lastUpdated = Time.now();
-        this.broadcastChannel = '/casparcg/' + channel.number + '-' + this.number;
+        this.broadcastChannel = '/casparcg/channels/' + channel.number + '/layers/' + this.number;
 
         this.producer = null;
         this.path = null;
@@ -24,7 +24,7 @@ class Layer {
 
     broadcast(websocketServer) {
         if (this.isActive()) {
-            webSocketServer.getClient().publish(this.broadcastChannel, this.getDataStruct());
+            this.channel.caspar.publish(this.broadcastChannel, this.getDataStruct());
         }
     }
 
@@ -35,6 +35,13 @@ class Layer {
             'path': this.path,
             'producer': this.producer
         };
+    }
+
+    handleOSCMessage(oscMessage)
+    {
+        this.lastUpdated = Time.now();
+
+        console.log(oscMessage);
     }
 };
 

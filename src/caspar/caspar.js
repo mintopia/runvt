@@ -1,7 +1,8 @@
 'use strict';
 
 const osc = require('osc');
-const caspar = require("caspar-cg");
+const caspar = require('caspar-cg');
+const Channel = require('./channel');
 
 class Caspar {
     constructor() {
@@ -46,7 +47,28 @@ class Caspar {
 
     handleOSCMessage(oscMessage)
     {
-        console.log(oscMessage);
+        let matches = oscMessage.address.match(/^\/channel\/(\d+)\/(.*)$/);
+        if (!matches) {
+            return;
+        }
+
+        let channel = this.getChannelByNumber(matches[1]);
+        if (!channel) {
+            console.log('Adding channel ' + matches[1]);
+            channel = new Channel(this, matches[1]);
+            this.channels.push(channel);
+        }
+
+        channel.handleOSCMessage(oscMessage);
+    }
+
+    getChannelByNumber(number)
+    {
+        for (let i = 0, n = this.channels.length; i < n; i++) {
+            if (this.channels[i].number === number) {
+                return this.channels[i];
+            }
+        }
     }
 
     setupAMCP()
@@ -76,6 +98,25 @@ class Caspar {
     setWebsocketServer(websocketServer)
     {
         this.websocketServer = websocketServer;
+    }
+
+    publish(channel, payload)
+    {
+        this.webSocketServer.getClient().publish(channel, payload);
+    }
+
+    broadcast(channel, payload)
+    {
+        this.webSocketServer.getClient().publish('/casparcg/all', this.getDataStruct());
+    }
+
+    getDataStruct()
+    {
+        let payload = [];
+        for (let i = 0, n = this.channels.length; i < n; i++) {
+            payload.push(this.channels[i].getDataStruct());
+        }
+        return payload;
     }
 };
 
