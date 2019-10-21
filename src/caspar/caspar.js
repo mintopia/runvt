@@ -8,6 +8,7 @@ class Caspar {
     constructor() {
         this.websocketServer = null;
         this.intervalTimer = null;
+        this.heartbeatTimer = null;
         this.channels = [];
     }
 
@@ -16,15 +17,18 @@ class Caspar {
 
         this.setupOSC();
         this.setupAMCP();
-        this.setupTimer();
+        this.setupTimers();
     }
 
-    setupTimer()
+    setupTimers()
     {
         let self = this;
         this.intervalTimer = setInterval(function() {
             self.tickFunction();
         }, 1000);
+        this.heartbeatTimer = setInterval(function() {
+            self.heartbeat();
+        }, 5000);
     }
 
     setupOSC()
@@ -84,6 +88,7 @@ class Caspar {
     }
 
     tickFunction() {
+        console.log('1 second tick');
         for (let i = this.channels.length - 1; i >= 0; i--) {
             let channel = this.channels[i];
             if (!channel.isActive()) {
@@ -102,12 +107,21 @@ class Caspar {
 
     publish(channel, payload)
     {
-        this.webSocketServer.getClient().publish(channel, payload);
+        this.websocketServer.getClient().publish(channel, payload);
     }
 
-    broadcast(channel, payload)
+    broadcast()
     {
-        this.webSocketServer.getClient().publish('/casparcg/all', this.getDataStruct());
+        this.websocketServer.getClient().publish('/casparcg/all', this.getDataStruct());
+    }
+
+    heartbeat()
+    {
+        console.log('5 second websocket heartbeat');
+        this.broadcast();
+        for (let i = 0, n = this.channels.length; i < n; i++) {
+            this.channels[i].heartbeat();
+        }
     }
 
     getDataStruct()

@@ -32,7 +32,7 @@ class Channel {
     {
         this.lastUpdated = Time.now();
 
-        let matches = oscMessage.address.match(/^\/channel\/(\d+)\/stage\/layer\/(\d+)\/(.*)$/);
+        let matches = oscMessage.address.match(/^\/channel\/(\d+)\/stage\/layer\/(\d+)\/foreground\/(.*)$/);
         if (!matches) {
             return;
         }
@@ -69,6 +69,14 @@ class Channel {
             payload.push(this.layers[i].getDataStruct());
         }
         return payload;
+    }
+
+    heartbeat()
+    {
+        this.broadcast();
+        for (let i = 0, n = this.layers.length; i < n; i++) {
+            this.layers[i].heartbeat();
+        }
     }
 };
 
