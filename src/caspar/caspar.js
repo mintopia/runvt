@@ -146,6 +146,9 @@ class Caspar {
         for (let i = 0, n = this.channels.length; i < n; i++) {
             this.channels[i].heartbeat();
         }
+        if (this.primaryLayer && this.primaryLayer.isActive()) {
+            this.publish('/casparcg/primary', this.primaryLayer.getDataStruct());
+        }
     }
 
     getDataStruct()
