@@ -14,8 +14,6 @@ class Layer {
         this.loop = false;
         this.timestamp = null;
         this.duration = null;
-
-        this.didBroadcast = false;
     }
 
     isActive() {
@@ -26,23 +24,33 @@ class Layer {
     }
 
     broadcast() {
-        if (this.isActive()) {
-            this.channel.caspar.publish(this.broadcastChannel, this.getDataStruct());
+        let payload = this.getDataStruct();
+        this.channel.caspar.publish(this.broadcastChannel, payload);
+        if (this.channel.caspar.primaryLayer && this.channel.caspar.primaryLayer == this) {
+            this.channel.caspar.publish('/casparcg/primary', payload);
         }
     }
 
     getDataStruct() {
-        return {
-            'channel': this.channel.number,
-            'number': this.number,
-            'producer': this.producer,
-            'path': this.path,
-            'name': this.name,
-            'paused': this.paused,
-            'loop': this.loop,
-            'timestamp': this.timestamp,
-            'duration': this.duration,
-        };
+        if (this.isActive()) {
+            return {
+                'channel': this.channel.number,
+                'number': this.number,
+                'producer': this.producer,
+                'path': this.path,
+                'name': this.name,
+                'paused': this.paused,
+                'loop': this.loop,
+                'timestamp': this.timestamp,
+                'duration': this.duration,
+            };
+        } else {
+            return {
+                'channel': this.channel.number,
+                'layer': this.number,
+                'producer': 'empty'
+            };
+        }
     }
 
     handleOSCMessage(oscMessage)

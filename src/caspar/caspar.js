@@ -3,6 +3,7 @@
 const osc = require('osc');
 const caspar = require('caspar-cg');
 const Channel = require('./channel');
+const config = require('../../config');
 
 class Caspar {
     constructor() {
@@ -37,12 +38,12 @@ class Caspar {
         let self = this;
 
         let udpPort = new osc.UDPPort({
-            localAddress: "0.0.0.0",
-            localPort: 6250
+            localAddress: config.casparcg.osc_ip,
+            localPort: config.casparcg.osc_port
         });
 
         udpPort.on("ready", function () {
-            console.log("Listening for OSC over UDP.");
+            console.log("Listening for OSC over UDP on " + config.casparcg.osc_ip + ':' + config.casparcg.osc_port);
         });
 
         udpPort.on("message", function (oscMessage) {
@@ -71,12 +72,15 @@ class Caspar {
             this.primaryLayer = channel.getPrimaryLayer();
         } else {
             if (channel.number <= this.primaryLayer.channel.number) {
-                this.primaryLayer = channel.getPrimaryLayer();
+                let primaryLayer = channel.getPrimaryLayer();
+                if (!primaryLayer) {
+                    this.primaryLayer.broadcast();
+                    this.primaryLayer = primaryLayer;
+                } else if (primaryLayer != this.primaryLayer) {
+                    this.primaryLayer = primaryLayer;
+                    primaryLayer.broadcast();
+                }
             }
-        }
-
-        if (this.primaryLayer && this.primaryLayer.didBroadcast && this.primaryLayer.isActive()) {
-            this.publish('/casparcg/primary', this.primaryLayer.getDataStruct());
         }
 
     }
@@ -92,9 +96,9 @@ class Caspar {
 
     setupAMCP()
     {
-        let ccg = new caspar("localhost", 5250);
+        let ccg = new caspar(config.casparcg.hostname, config.casparcg.amcp_port);
         ccg.connect(function () {
-            console.log('Connecting to CasparCG');
+            console.log('Connecting to CasparCG at ' + config.casparcg.hostname + ':' + config.casparcg.amcp_port);
         });
 
         ccg.on("connected", function () {
@@ -114,7 +118,7 @@ class Caspar {
             }
         }
         if (this.primaryLayer && !this.primaryLayer.isActive()) {
-            this.publish('/casparcg/primary', this.primaryLayer.getDataStruct());
+            this.primaryLayer.broadcast();
             this.primaryLayer = null;
         }
     }
@@ -147,12 +151,10 @@ class Caspar {
 
     heartbeat()
     {
+        console.log('Heartbeat');
         this.broadcast();
         for (let i = 0, n = this.channels.length; i < n; i++) {
             this.channels[i].heartbeat();
-        }
-        if (this.primaryLayer && this.primaryLayer.isActive()) {
-            this.publish('/casparcg/primary', this.primaryLayer.getDataStruct());
         }
     }
 

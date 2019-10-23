@@ -18,6 +18,8 @@ var VtClock = function(svgElementId) {
 		this[properties[i]] = svgDocument.getElementById(properties[i]);
 	}
 
+	this.paused = false;
+
 	this.updateClock(0);
 };
 
@@ -69,7 +71,7 @@ VtClock.prototype.refreshClock = function(animationTime) {
 	this.updateTimecodeString(timestamp);
 	this.updateClock(timestamp);
 
-	if (timestamp > 0) {
+	if (!this.paused && timestamp > 0) {
 		window.requestAnimationFrame(function(time) {
 			self.refreshClock(time);
 		});
@@ -101,12 +103,17 @@ VtClock.prototype.setDuration = function(s) {
 };
 
 VtClock.prototype.updateFromCaspar = function(data) {
+	console.log(data);
+
 	if (data.producer !== 'ffmpeg') {
 		this.channel.textContent = '-';
 		this.layer.textContent = '-';
 		this.path.textContent = '-';
 		this.duration.textContent = '-';
 		this.name.textContent = 'RunVT';
+		this.paused = false;
+
+		this.endTime = Date.now();
 		this.updateTimecodeString(0);
 		this.updateClock(0);
 	} else {
@@ -116,9 +123,11 @@ VtClock.prototype.updateFromCaspar = function(data) {
 		this.path.textContent = data.path;
 
 		this.setDuration(Math.floor(data.duration));
+		this.paused = data.paused;
 		if (!data.paused) {
 			this.start(data.duration - data.timestamp);
 		} else {
+			console.log('Paused');
 			this.endTime = Date.now() + (data.duration - data.timestamp);
 			this.updateTimecodeString(data.timestamp);
 		}
