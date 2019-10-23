@@ -107,10 +107,15 @@ class Caspar {
             let channel = this.channels[i];
             if (!channel.isActive()) {
                 console.log('Removing channel ' + channel.number);
+                channel.broadcast();
                 this.channels.splice(i, 1);
             } else {
                 channel.updateLayers();
             }
+        }
+        if (this.primaryLayer && !this.primaryLayer.isActive()) {
+            this.publish('/casparcg/primary', this.primaryLayer.getDataStruct());
+            this.primaryLayer = null;
         }
     }
 

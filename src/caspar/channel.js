@@ -19,12 +19,18 @@ class Channel {
     }
 
     updateLayers() {
+        let shouldBroadcast = false;
         for (let i = this.layers.length - 1; i >= 0; i--) {
             let layer = this.layers[i];
             if (!layer.isActive()) {
                 console.log('Removing layer ' + layer.number + ' from channel ' + this.number);
+                layer.broadcast();
+                shouldBroadcast = true;
                 this.layers.splice(i, 1);
             }
+        }
+        if (shouldBroadcast) {
+            this.broadcast();
         }
     }
 
