@@ -115,7 +115,7 @@ VtClock.prototype.updateFromCaspar = function(data) {
 		this.name.textContent = data.name;
 		this.path.textContent = data.path;
 
-		this.setDuration(data.duration);
+		this.setDuration(Math.floor(data.duration));
 		if (!data.paused) {
 			this.start(data.duration - data.timestamp);
 		} else {
