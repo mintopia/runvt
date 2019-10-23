@@ -1,15 +1,18 @@
 'use strict';
 
 const faye = require('faye');
-const http = require('node-http-server').Server;
+const http = require('node-http-server');
 const caspar = require('./caspar/caspar');
 
 // Start our WebServer
-var httpServer = new http({
-    'port': 8000,
-    'root': './static/'
-});
+const httpConfig = new http.Config;
+httpConfig.port = 8000;
+httpConfig.root = './static/';
+httpConfig.contentType.svg = 'image/svg+xml';
+httpConfig.server.noCache = true;
+let httpServer = new http.Server(httpConfig);
 httpServer.deploy();
+
 console.log('Web server started on port 8000');
 
 // Set up Faye

@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+	<style>
+		.clock-numbers {
+			fill: #ffffff;
+			font-size: 16;
+			font-family: Helvetica, Arial, sans-serif;
+		}
+
+		.clock-fade {
+			fill: #c0c0c0;
+			font-size: 16;
+			font-family: Helvetica, Arial, sans-serif;
+			text-transform: uppercase;
+			letter-spacing: 2;
+			text-rendering: optimizeLegibility;
+		}
+
+		.clock-pip-minor {
+			stroke: #ffffff;
+			stroke-width: 2;
+		}
+
+		.clock-pip-major {
+			stroke: #ffffff;
+			stroke-width: 4;
+		}
+
+		.clock-data {
+			text-rendering: optimizeLegibility;
+			font-family: Helvetica, Arial, sans-serif;
+			fill: #ffffff;
+		}
+
+		.clock-timecode {
+			text-anchor: end;
+			font-size: 36;
+		}
+
+		.clock-title {
+			text-anchor: middle;
+		}
+
+		.clock-label {
+			text-transform: uppercase;
+			fill: #a0a0a0;
+		}
+	</style>
+	<g>
+		<title>background</title>
+		<rect fill="#000000" id="background" width="1280" height="720" y="0" x="0"/>
+	</g>
+	<g>
+		<title>Clock </title>
+
+
+		<line id="pip-1" x1="234" y1="161" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-2" x1="214" y1="163" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-3" x1="188" y1="151" x2="250" y2="360" class="clock-pip-major" />
+		<line id="pip-4" x1="173" y1="175" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-5" x1="149" y1="178" x2="250" y2="360" class="clock-pip-major" />
+
+		<line id="pip-6" x1="136" y1="195" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-7" x1="119" y1="208" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-8" x1="104" y1="222" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-9" x1="90" y1="238" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-10" x1="70" y1="255" x2="250" y2="360" class="clock-pip-major" />
+
+		<line id="pip-11" x1="68" y1="276" x2="250" y2="360" class="clock-pip-minor"  />
+		<line id="pip-12" x1="61" y1="294" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-13" x1="55" y1="314" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-14" x1="50" y1="335" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-15" x1="32" y1="358" x2="250" y2="360" class="clock-pip-major" />
+
+		<line id="pip-16" x1="50" y1="378" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-17" x1="53" y1="399" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-18" x1="58" y1="419" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-19" x1="64" y1="439" x2="250" y2="360" class="clock-pip-minor" />
+		<line id="pip-20" x1="68" y1="463" x2="250" y2="360" class="clock-pip-major" />
+
+		<line id="pip-25" x1="139" y1="545" x2="250" y2="360" class="clock-pip-major" />
+
+		<line id="pip-30" x1="248" y1="570" x2="250" y2="360" class="clock-pip-major" />
+
+		<line id="pip-35" x1="351" y1="542" x2="250" y2="360" class="clock-pip-major" />
+
+		<line id="pip-40" x1="435" y1="472" x2="250" y2="360" class="clock-pip-major" />
+
+		<line id="pip-45" x1="476" y1="358" x2="250" y2="360" class="clock-pip-major" />
+
+		<circle id="green" cx="250" cy="360" r="200" fill="none" stroke="#33ff33" stroke-width="4" stroke-dasharray="632,20000" transform="rotate(0,250,360)" />
+		<circle id="amber" cx="250" cy="360" r="200" fill="none" stroke="#ffcc00" stroke-width="4" stroke-dasharray="424,20000" transform="rotate(150,250,360)" />
+		<circle id="red" cx="250" cy="360" r="200" fill="none" stroke="#ff3333" stroke-width="4" stroke-dasharray="212,20000" transform="rotate(210,250,360)" />
+
+		<circle id="circle" cx="250" cy="360" r="200" fill="none" stroke="#ffffff" stroke-width="4" stroke-dasharray="948,20000" transform="rotate(0,250,360)" />
+
+		<line id="pip-0" x1="255" y1="152" x2="255" y2="168" stroke="#ffffff" stroke-width="4" />
+
+		<circle id="clipping-in" cx="250" cy="360" r="192" fill="#000"  />
+		<circle id="clipping-out" cx="250" cy="360" r="218" fill="none" stroke-width="20" stroke="#000"  />
+
+		<line id="hand" x1="250" y1="360" x2="250" y2="360" stroke="#ffffff" stroke-width="2" />
+
+		<circle id="inner" cx="250" cy="360" r="20" fill="#000000" stroke-width="2" stroke="#fff"  />
+
+		<text id="text-0" x="252" y="135" class="clock-numbers">0</text>
+		<text id="text-3" x="180" y="143" class="clock-numbers">3</text>
+		<text id="text-5" x="127" y="165" class="clock-numbers">5</text>
+		<text id="text-10" x="37" y="248" class="clock-numbers">10</text>
+		<text id="text-15" x="11" y="363" class="clock-numbers">15</text>
+		<text id="text-20" x="37" y="476" class="clock-numbers">20</text>
+		<text id="text-25" x="120" y="563" class="clock-numbers">25</text>
+		<text id="text-30" x="239" y="593" class="clock-numbers">30</text>
+		<text id="text-35" x="351" y="566" class="clock-numbers">35</text>
+		<text id="text-40" x="445" y="479" class="clock-numbers">40</text>
+		<text id="text-45" x="475" y="362" class="clock-numbers">45</text>
+
+		<text id="text-fade" x="229" y="152" class="clock-fade" transform="rotate(353, 250, 360)">Fade</text>
+	</g>
+	<g class="clock-data" font-size="24">
+		<title>data</title>
+		<text id="timecode" x="420" y="250" class="clock-timecode" font-size="36">00:00:00.</text>
+		<text id="timecode_ms" x="422" y="250" class="clock-timecode-ms">000</text>
+
+		<text id="name" x="640" y="80" class="clock-title" font-size="36">RunVT</text>
+
+		<text x="560" y="200" class="clock-label" font-size="16">Path</text>
+		<text id="path" x="560" y="230" class="clock-text">-</text>
+
+		<text x="560" y="280" class="clock-label" font-size="16">Duration</text>
+		<text id="duration" x="560" y="310" class="clock-text">-</text>
+
+		<text x="560" y="360" class="clock-label" font-size="16">Channel</text>
+		<text id="channel" x="560" y="390" class="clock-text">-</text>
+
+		<text x="750" y="360" class="clock-label" font-size="16">Layer</text>
+		<text id="layer" x="750" y="390" class="clock-text">-</text>
+	</g>
+</svg>

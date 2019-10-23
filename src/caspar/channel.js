@@ -28,6 +28,17 @@ class Channel {
         }
     }
 
+    getPrimaryLayer() {
+        let lowestLayer = null;
+        for (let i = this.layers.length - 1; i >= 0; i--) {
+            let layer = this.layers[i];
+            if (layer.isActive() && (!lowestLayer || layer.number < lowestLayer.number)) {
+                lowestLayer = layer;
+            }
+        }
+        return lowestLayer;
+    }
+
     handleOSCMessage(oscMessage)
     {
         this.lastUpdated = Date.now();

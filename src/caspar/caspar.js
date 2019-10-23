@@ -9,6 +9,7 @@ class Caspar {
         this.websocketServer = null;
         this.intervalTimer = null;
         this.heartbeatTimer = null;
+        this.primaryLayer = null;
         this.channels = [];
     }
 
@@ -64,8 +65,20 @@ class Caspar {
             channel = new Channel(this, matches[1]);
             this.channels.push(channel);
         }
-
         channel.handleOSCMessage(oscMessage);
+
+        if (!this.primaryLayer) {
+            this.primaryLayer = channel.getPrimaryLayer();
+        } else {
+            if (channel.number <= this.primaryLayer.channel.number) {
+                this.primaryLayer = channel.getPrimaryLayer();
+            }
+        }
+
+        if (this.primaryLayer && this.primaryLayer.didBroadcast && this.primaryLayer.isActive()) {
+            this.publish('/casparcg/primary', this.primaryLayer.getDataStruct());
+        }
+
     }
 
     getChannelByNumber(number)
@@ -103,7 +116,17 @@ class Caspar {
 
     setWebsocketServer(websocketServer)
     {
+        var self = this;
         this.websocketServer = websocketServer;
+        websocketServer.on('subscribe', function(clientId, channel) {
+            if (channel === '/casparcg/primary') {
+                if (self.primaryLayer && self.primaryLayer.isActive()) {
+                    self.publish('/casparcg/primary', self.primaryLayer.getDataStruct());
+                }
+            } else if (channel === '/casparcg/all') {
+                this.broadcast();
+            }
+        });
     }
 
     publish(channel, payload)

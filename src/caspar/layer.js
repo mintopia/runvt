@@ -14,6 +14,8 @@ class Layer {
         this.loop = false;
         this.timestamp = null;
         this.duration = null;
+
+        this.didBroadcast = false;
     }
 
     isActive() {
@@ -51,7 +53,9 @@ class Layer {
         let shouldBroadcast = this.isSignificantChange(oldStruct, this.getDataStruct());
 
         // We had a significant change, let's broadcast
+        this.didBroadcast = false;
         if (shouldBroadcast) {
+            this.didBroadcast = true;
             this.broadcast();
             this.channel.broadcast();
             this.channel.caspar.broadcast();
@@ -73,8 +77,8 @@ class Layer {
                     break;
 
                 case 'file/time':
-                    this.timestamp = oscMessage.args[0];
-                    this.duration = oscMessage.args[1];
+                    this.timestamp = oscMessage.args[0] * 1000;
+                    this.duration = oscMessage.args[1] * 1000;
                     break;
 
                 case 'loop':
