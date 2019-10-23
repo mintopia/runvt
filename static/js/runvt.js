@@ -103,8 +103,6 @@ VtClock.prototype.setDuration = function(s) {
 };
 
 VtClock.prototype.updateFromCaspar = function(data) {
-	console.log(data);
-
 	if (data.producer !== 'ffmpeg') {
 		this.channel.textContent = '-';
 		this.layer.textContent = '-';
@@ -127,7 +125,6 @@ VtClock.prototype.updateFromCaspar = function(data) {
 		if (!data.paused) {
 			this.start(data.duration - data.timestamp);
 		} else {
-			console.log('Paused');
 			this.endTime = Date.now() + (data.duration - data.timestamp);
 			this.updateTimecodeString(data.timestamp);
 		}
